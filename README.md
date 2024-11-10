@@ -4,7 +4,7 @@
 
 1. Clone the repository
 2. Enter the folder of our cloned project
-3. Use python ./TaskManager.py, everything in main of TaskManager.py will be executed.
+3. Use `python -m src.models.TaskManager` -> everything in main of TaskManager.py will be executed.
 
 ## Description
 
@@ -16,6 +16,20 @@ IMPORTANT: This project was created for practice POO
 
 1. Python
 
+## Libraries used
+
+1. pytest -> You need to install it -> `pip install pytest`
+2. datetime
+3. typing
+4. uuid
+5. logging
+
 ## Portfolio Link
 
 [`https://www.diegolibonati.com.ar/#/project/TaskManager-Python-POO`](https://www.diegolibonati.com.ar/#/project/TaskManager-Python-POO)
+
+## PyTest
+
+1. Enter the test folder
+2. Run the command `pytest --log-cli-level=INFO`
+3. Now you can see if the tests passed

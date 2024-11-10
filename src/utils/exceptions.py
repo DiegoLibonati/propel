@@ -2,6 +2,10 @@ class InvalidTaskStateError(Exception):
     """Exception raised when an invalid state is set for a Task."""
     pass
 
+class InvalidTaskEdit(Exception):
+    """Exception raised when try to edit a task without any params."""
+    pass
+
 class InvalidStateOrIdError(Exception):
     """Exception raised when an invalid state or id is set for a Task."""
     pass

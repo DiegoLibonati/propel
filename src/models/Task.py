@@ -2,7 +2,8 @@ from datetime import datetime
 from typing import Literal
 from uuid import uuid4
 
-from exceptions import InvalidTaskStateError
+from src.utils.exceptions import InvalidTaskStateError
+from src.utils.exceptions import InvalidTaskEdit
 
 StateType = Literal["pending", "in_progress", "complete"] 
 States = ["pending", "in_progress", "complete"]
@@ -21,18 +22,20 @@ class Task:
     @property
     def id(self) -> str:
         return self.__id
-
-    def print(self) -> None:
-        print(f"Task: {self.id}\nTitle: {self.title}\nDescription: {self.description}\nExpiration Date: {self.expiration_date}\nState: {self.__state}")
+    
+    @property 
+    def state(self) -> str:
+        return self.__state
 
     def change_task_state(self, state: StateType) -> None:
         if not state in States: raise InvalidTaskStateError("You must enter a valid status to change the status of a task.")
         
+        previous_state = self.state
         self.__state = state
-        print(f"{self.title} task with pending status was changed to in_progress")
+        print(f"{self.title} task with {previous_state} status was changed to {state}")
 
-    def edit(self, title: str, description: str, expiration_date: datetime) -> None:
-        if not title and not description and not expiration_date: return
+    def edit(self, title: str = "", description: str = "", expiration_date: datetime = None) -> None:
+        if not title and not description and not expiration_date: raise InvalidTaskEdit("You must send at least one param to edit a task.")
 
         dict = {
             "title": title,
@@ -43,6 +46,16 @@ class Task:
         for key, value in dict.items():
             if value:
                 setattr(self, key, value)
+    
+    def __str__(self) -> None:
+        return (
+            f"Task: {self.id}\n"
+            f"Title: {self.title}\n"
+            f"Description: {self.description}\n"
+            f"Expiration Date: {self.expiration_date}\n"
+            f"State: {self.state}"
+        )
+
 
 def main() -> None:
     print("----- Main Task.py -----")
@@ -53,9 +66,10 @@ def main() -> None:
         expiration_date=datetime(year=2025, month=2, day=24)
     )
 
-    task.print()
+    print(task)
 
     task.change_task_state(state="in_progress")
+
 
 if __name__ == "__main__":
     main()
