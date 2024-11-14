@@ -1,8 +1,5 @@
 import logging
 
-from datetime import datetime
-
-from pytest import fixture
 from pytest import raises
 
 from src.models.Task import Task
@@ -15,28 +12,6 @@ from src.utils.exceptions import TaskNotFoundError
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-EXPIRATION_DATE_TASK = datetime(year=2025, month=2, day=24)
-
-
-@fixture
-def task_manager() -> TaskManager:
-    return TaskManager()
-
-@fixture
-def task() -> Task:
-    return Task(
-        title="Tarea 1",
-        description="Esta es una descripcion de la tarea",
-        expiration_date=EXPIRATION_DATE_TASK
-    )
-
-@fixture
-def task2() -> Task:
-    return Task(
-        title="Tarea 2",
-        description="Esta es una descripcion de la tarea 2",
-        expiration_date=EXPIRATION_DATE_TASK
-    )
 
 def test_add_task(task_manager: TaskManager, task: Task, task2: Task) -> None:
     task_manager.add_task(task=task)
@@ -44,9 +19,9 @@ def test_add_task(task_manager: TaskManager, task: Task, task2: Task) -> None:
 
     len_task_manager = len(task_manager.tasks)
 
-    assert task in task_manager.tasks
-    assert task2 in task_manager.tasks
-    assert len_task_manager == len(task_manager.tasks)
+    assert task.id in task_manager.tasks_keys
+    assert task2.id in task_manager.tasks_keys
+    assert len_task_manager == task_manager.len_tasks
 
 def test_add_task_invalid_task(task_manager: TaskManager) -> None:
     wrong_task = {
@@ -63,18 +38,18 @@ def test_add_task_already_exists(task_manager: TaskManager, task: Task) -> None:
         task_manager.add_task(task=task)
         task_manager.add_task(task=task)
 
-    assert str(exc_info.value) == "This task already exists in the task list"
+    assert str(exc_info.value) == "This task already exists in the task list."
 
 def test_remove_task(task_manager: TaskManager, task: Task, task2: Task) -> None:
     task_manager.add_task(task=task)
     task_manager.add_task(task=task2)
 
-    len_task_manager = len(task_manager.tasks)
+    len_task_manager = task_manager.len_tasks
 
     task_manager.remove_task(id_task=task.id)
     
-    assert len(task_manager.tasks) == len_task_manager - 1
-    assert not task in task_manager.tasks
+    assert task_manager.len_tasks == len_task_manager - 1
+    assert not task.id in task_manager.tasks_keys
 
 def test_remove_task_invalid_idtask(task_manager: TaskManager) -> None:
     wrong_task_id = ""

@@ -2,26 +2,16 @@ import logging
 
 from datetime import datetime
 
-from pytest import fixture
 from pytest import raises
 
 from src.models.Task import Task
 from src.utils.exceptions import InvalidTaskStateError
 from src.utils.exceptions import InvalidTaskEdit
 
+from test.conftest import EXPIRATION_DATE_TASK
+
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
-EXPIRATION_DATE_TASK = datetime(year=2025, month=2, day=24)
-
-
-@fixture
-def task() -> Task:
-    return Task(
-        title="Tarea 1",
-        description="Esta es una descripcion de la tarea",
-        expiration_date=EXPIRATION_DATE_TASK
-    )
 
 
 def test_create_task(task: Task) -> None:
@@ -32,14 +22,14 @@ def test_create_task(task: Task) -> None:
 
 
 def test_change_state(task: Task) -> None:
-    task.change_task_state("in_progress")
+    task.change_state("in_progress")
     
     assert task.state == "in_progress"
 
 
 def test_change_state_invalid_task_state(task: Task) -> None:    
     with raises(InvalidTaskStateError) as exc_info:
-        task.change_task_state(state="asd")
+        task.change_state(state="asd")
 
     assert str(exc_info.value) == "You must enter a valid status to change the status of a task."
 
