@@ -1,4 +1,4 @@
-# TaskManager-Python-POO
+# TaskManager Python POO
 
 ## Getting Started
 
