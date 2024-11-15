@@ -34,7 +34,7 @@ pytest
 
 [`https://www.diegolibonati.com.ar/#/project/TaskManager-Python-POO`](https://www.diegolibonati.com.ar/#/project/TaskManager-Python-POO)
 
-## PyTest
+## Testing
 
 1. Join to the correct path of the clone
 2. Execute: `python -m venv venv`
