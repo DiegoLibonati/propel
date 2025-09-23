@@ -1,14 +1,13 @@
-from typing import KeysView
-from typing import ValuesView
-
 from datetime import datetime
+from typing import KeysView, ValuesView
 
-from src.models.Task import Task
-from src.models.Task import StateType
-from src.utils.exceptions import InvalidTaskIdError
-from src.utils.exceptions import TaskNotFoundError
-from src.utils.exceptions import InvalidTaskError
-from src.utils.exceptions import TaskAlreadyExistsError
+from src.models.Task import StateType, Task
+from src.utils.exceptions import (
+    InvalidTaskError,
+    InvalidTaskIdError,
+    TaskAlreadyExistsError,
+    TaskNotFoundError,
+)
 
 
 class TaskManager:
@@ -18,43 +17,54 @@ class TaskManager:
     @property
     def tasks(self) -> dict[str, Task]:
         return self.__tasks
-    
+
     @property
     def tasks_keys(self) -> KeysView[str]:
         return self.tasks.keys()
-    
+
     @property
     def tasks_values(self) -> ValuesView[Task]:
         return self.tasks.values()
-    
+
     @property
     def len_tasks(self) -> int:
         return len(self.tasks)
 
     def add_task(self, task: Task) -> None:
-        if not isinstance(task, Task): raise InvalidTaskError("You must enter a valid Task template.")
-        
-        if task in self.tasks_values: raise TaskAlreadyExistsError("This task already exists in the task list.")
+        if not isinstance(task, Task):
+            raise InvalidTaskError("You must enter a valid Task template.")
+
+        if task in self.tasks_values:
+            raise TaskAlreadyExistsError("This task already exists in the task list.")
 
         self.__tasks[task.id] = task
 
     def remove_task(self, id_task: str) -> None:
-        if not id_task: raise InvalidTaskIdError("You must enter a valid ID.")
+        if not id_task:
+            raise InvalidTaskIdError("You must enter a valid ID.")
 
         task = self._find_task_by_id(id_task=id_task)
-        
+
         del self.__tasks[task.id]
 
-    def edit_task(self, id_task: str, title: str = "", description: str = "", expiration_date: datetime = None) -> None:
-        if not id_task: raise InvalidTaskIdError("You must enter a valid ID.")
+    def edit_task(
+        self,
+        id_task: str,
+        title: str = "",
+        description: str = "",
+        expiration_date: datetime = None,
+    ) -> None:
+        if not id_task:
+            raise InvalidTaskIdError("You must enter a valid ID.")
 
         task = self._find_task_by_id(id_task=id_task)
 
         task.edit(title=title, description=description, expiration_date=expiration_date)
 
     def move_task_by_state(self, id_task: str, state: StateType) -> None:
-        if not id_task: raise InvalidTaskIdError("You must enter a valid ID.")
-        
+        if not id_task:
+            raise InvalidTaskIdError("You must enter a valid ID.")
+
         task = self._find_task_by_id(id_task=id_task)
         task.change_state(state=state)
 
@@ -67,25 +77,26 @@ class TaskManager:
 
     def _find_task_by_id(self, id_task: str) -> Task:
         task = self.tasks.get(id_task, None)
-        
-        if not task: raise TaskNotFoundError(f"Task not found.")
+
+        if not task:
+            raise TaskNotFoundError("Task not found.")
 
         return task
 
 
 def main() -> None:
     task_manager = TaskManager()
-    
+
     task = Task(
         title="Tarea 1",
         description="Esta es una descripcion de la tarea",
-        expiration_date=datetime(year=2025, month=2, day=24)
+        expiration_date=datetime(year=2025, month=2, day=24),
     )
 
     task2 = Task(
         title="Tarea 2",
         description="Esta es una descripcion de la tarea 2",
-        expiration_date=datetime(year=2025, month=2, day=24)
+        expiration_date=datetime(year=2025, month=2, day=24),
     )
 
     task_manager.add_task(task=task)
