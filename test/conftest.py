@@ -2,8 +2,7 @@ from datetime import datetime
 
 from pytest import fixture
 
-from src.models.Task import Task
-from src.models.TaskManager import TaskManager
+from src.models import Task, TaskManager
 
 EXPIRATION_DATE_TASK = datetime(year=2025, month=2, day=24)
 

@@ -2,8 +2,7 @@ import logging
 
 from pytest import raises
 
-from src.models.Task import Task
-from src.models.TaskManager import TaskManager
+from src.models import Task, TaskManager
 from src.utils.exceptions import (
     InvalidTaskError,
     InvalidTaskIdError,

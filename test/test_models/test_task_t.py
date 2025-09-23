@@ -4,7 +4,7 @@ from test.conftest import EXPIRATION_DATE_TASK
 
 from pytest import raises
 
-from src.models.Task import Task
+from src.models import Task
 from src.utils.exceptions import InvalidTaskEdit, InvalidTaskStateError
 
 logging.basicConfig(

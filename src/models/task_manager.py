@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import KeysView, ValuesView
 
-from src.models.Task import StateType, Task
+from src.models.task_t import StateType, Task
 from src.utils.exceptions import (
     InvalidTaskError,
     InvalidTaskIdError,
