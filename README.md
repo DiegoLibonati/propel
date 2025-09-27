@@ -34,7 +34,7 @@ Ideal for those who need a simple but functional solution to organize their task
 
 ## Technologies used
 
-1. Python
+1. Python >= 3.11
 
 ## Libraries used
 
