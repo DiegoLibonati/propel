@@ -1,14 +1,14 @@
+from collections.abc import KeysView, ValuesView
 from datetime import datetime
-from typing import KeysView, ValuesView
 
+from task_manager.configs.logger_config import setup_logger
+from task_manager.constants.codes import CODE_ALREADY_EXISTS_TASK, CODE_NOT_FOUND_TASK, CODE_NOT_VALID_PROPERTIES_TASK, CODE_NOT_VALID_TASK
+from task_manager.constants.messages import MESSAGE_ALREADY_EXISTS_TASK, MESSAGE_NOT_FOUND_TASK, MESSAGE_NOT_VALID_PROPERTIES_TASK, MESSAGE_NOT_VALID_TASK
+from task_manager.constants.types import StateType
 from task_manager.models import Task
-from task_manager.utils.exceptions import (
-    InvalidTaskError,
-    InvalidTaskIdError,
-    TaskAlreadyExistsError,
-    TaskNotFoundError,
-)
-from task_manager.utils.types import StateType
+from task_manager.utils.exceptions import ConflictError, NotFoundError, ValidationError
+
+logger = setup_logger("Task Manager - manager.py")
 
 
 class Manager:
@@ -33,16 +33,16 @@ class Manager:
 
     def add_task(self, task: Task) -> None:
         if not isinstance(task, Task):
-            raise InvalidTaskError("You must enter a valid Task template.")
+            raise ValidationError(code=CODE_NOT_VALID_TASK, message=MESSAGE_NOT_VALID_TASK)
 
         if task in self.tasks_values:
-            raise TaskAlreadyExistsError("This task already exists in the task list.")
+            raise ConflictError(code=CODE_ALREADY_EXISTS_TASK, message=MESSAGE_ALREADY_EXISTS_TASK)
 
         self.__tasks[task.id] = task
 
     def remove_task(self, id_task: str) -> None:
         if not id_task:
-            raise InvalidTaskIdError("You must enter a valid ID.")
+            raise ValidationError(code=CODE_NOT_VALID_PROPERTIES_TASK, message=MESSAGE_NOT_VALID_PROPERTIES_TASK)
 
         task = self._find_task_by_id(id_task=id_task)
 
@@ -56,7 +56,7 @@ class Manager:
         expiration_date: datetime = None,
     ) -> None:
         if not id_task:
-            raise InvalidTaskIdError("You must enter a valid ID.")
+            raise ValidationError(code=CODE_NOT_VALID_PROPERTIES_TASK, message=MESSAGE_NOT_VALID_PROPERTIES_TASK)
 
         task = self._find_task_by_id(id_task=id_task)
 
@@ -64,23 +64,23 @@ class Manager:
 
     def move_task_by_state(self, id_task: str, state: StateType) -> None:
         if not id_task:
-            raise InvalidTaskIdError("You must enter a valid ID.")
+            raise ValidationError(code=CODE_NOT_VALID_PROPERTIES_TASK, message=MESSAGE_NOT_VALID_PROPERTIES_TASK)
 
         task = self._find_task_by_id(id_task=id_task)
         task.change_state(state=state)
 
-    def print_tasks(self) -> None:
-        print(f"----- Tasks ({self.len_tasks}) -----\n")
+    def logging_task(self) -> None:
+        logger.info(f"----- Tasks ({self.len_tasks}) -----\n")
         for task in self.tasks_values:
-            print(f"---- Start Task: {task.id} -----")
-            print(task)
-            print(f"---- End Task: {task.id} -----\n\n")
+            logger.info(f"---- Start Task: {task.id} -----")
+            logger.info(task)
+            logger.info(f"---- End Task: {task.id} -----\n\n")
 
     def _find_task_by_id(self, id_task: str) -> Task:
         task = self.tasks.get(id_task, None)
 
         if not task:
-            raise TaskNotFoundError("Task not found.")
+            raise NotFoundError(code=CODE_NOT_FOUND_TASK, message=MESSAGE_NOT_FOUND_TASK)
 
         return task
 
@@ -103,7 +103,7 @@ def main() -> None:
     task_manager.add_task(task=task)
     task_manager.add_task(task=task2)
 
-    task_manager.print_tasks()
+    task_manager.logging_task()
 
 
 if __name__ == "__main__":

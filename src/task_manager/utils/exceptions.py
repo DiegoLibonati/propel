@@ -1,40 +1,42 @@
-class InvalidTaskStateError(Exception):
-    """Exception raised when an invalid state is set for a Task."""
-
-    pass
+from task_manager.constants.codes import CODE_ERROR_INTERNAL_LIBRARY
+from task_manager.constants.messages import MESSAGE_ERROR_INTERNAL_LIBRARY
 
 
-class InvalidTaskEdit(Exception):
-    """Exception raised when try to edit a task without any params."""
+class BaseError(Exception):
+    message: str = MESSAGE_ERROR_INTERNAL_LIBRARY
+    code: str = CODE_ERROR_INTERNAL_LIBRARY
 
-    pass
-
-
-class InvalidStateOrIdError(Exception):
-    """Exception raised when an invalid state or id is set for a Task."""
-
-    pass
-
-
-class InvalidTaskIdError(Exception):
-    """Exception raised when an invalid id is set for a Task."""
-
-    pass
+    def __init__(
+        self,
+        code: str = code,
+        message: str | None = None,
+    ):
+        if message is not None:
+            self.message = message
+        if code is not None:
+            self.code = code
+        super().__init__(self.message)
 
 
-class InvalidTaskError(Exception):
-    """Exception raised when an invalid Task is setted."""
-
-    pass
+class ValidationError(BaseError):
+    message = "Validation error"
 
 
-class TaskAlreadyExistsError(Exception):
-    """Exception raised when an Task already exists."""
-
-    pass
+class AuthenticationError(BaseError):
+    message = "Authentication error"
 
 
-class TaskNotFoundError(Exception):
-    """Exception raised when a task is not found in the TaskManager."""
+class NotFoundError(BaseError):
+    message = "Resource not found"
 
-    pass
+
+class ConflictError(BaseError):
+    message = "Conflict error"
+
+
+class BusinessError(BaseError):
+    message = "Business rule violated"
+
+
+class InternalError(BaseError):
+    message = "Internal error"

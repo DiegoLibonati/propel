@@ -1,30 +1,31 @@
 from datetime import datetime
 
-from pytest import fixture
+import pytest
 
-from task_manager import Manager, Task
+from task_manager.manager import Manager
+from task_manager.models.task import Task
 
-EXPIRATION_DATE_TASK = datetime(year=2025, month=2, day=24)
+
+@pytest.fixture
+def expiration_date() -> datetime:
+    return datetime(year=2025, month=12, day=31)
 
 
-@fixture
-def task() -> Task:
+@pytest.fixture
+def task(expiration_date: datetime) -> Task:
     return Task(
-        title="Tarea 1",
-        description="Esta es una descripcion de la tarea",
-        expiration_date=EXPIRATION_DATE_TASK,
+        title="Test Task",
+        description="Test Description",
+        expiration_date=expiration_date,
     )
 
 
-@fixture
-def task2() -> Task:
-    return Task(
-        title="Tarea 2",
-        description="Esta es una descripcion de la tarea 2",
-        expiration_date=EXPIRATION_DATE_TASK,
-    )
-
-
-@fixture
-def task_manager() -> Manager:
+@pytest.fixture
+def manager() -> Manager:
     return Manager()
+
+
+@pytest.fixture
+def manager_with_task(manager: Manager, task: Task) -> Manager:
+    manager.add_task(task=task)
+    return manager

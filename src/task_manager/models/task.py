@@ -1,10 +1,14 @@
 from datetime import datetime
 from uuid import uuid4
 
-from task_manager.utils.exceptions import InvalidTaskEdit, InvalidTaskStateError
-from task_manager.utils.types import StateType
+from task_manager.configs.logger_config import setup_logger
+from task_manager.constants.codes import CODE_NOT_VALID_PROPERTIES_TASK, CODE_NOT_VALID_STATUS_TASK
+from task_manager.constants.messages import MESSAGE_NOT_VALID_PROPERTIES_TASK, MESSAGE_NOT_VALID_STATUS_TASK
+from task_manager.constants.types import StateType
+from task_manager.constants.vars import States
+from task_manager.utils.exceptions import ValidationError
 
-States = ["pending", "in_progress", "complete"]
+logger = setup_logger("Task Manager - task.py")
 
 
 class Task:
@@ -43,19 +47,15 @@ class Task:
 
     def change_state(self, state: StateType) -> None:
         if state not in States:
-            raise InvalidTaskStateError(
-                "You must enter a valid status to change the status of a task."
-            )
+            raise ValidationError(code=CODE_NOT_VALID_STATUS_TASK, message=MESSAGE_NOT_VALID_STATUS_TASK)
 
         previous_state = self.state
         self.__state = state
-        print(f"{self._title} task with {previous_state} status was changed to {state}")
+        logger.info(f"{self._title} task with {previous_state} status was changed to {state}")
 
-    def edit(
-        self, title: str = "", description: str = "", expiration_date: datetime = None
-    ) -> None:
+    def edit(self, title: str = "", description: str = "", expiration_date: datetime = None) -> None:
         if not title and not description and not expiration_date:
-            raise InvalidTaskEdit("You must send at least one param to edit a task.")
+            raise ValidationError(code=CODE_NOT_VALID_PROPERTIES_TASK, message=MESSAGE_NOT_VALID_PROPERTIES_TASK)
 
         dict = {
             "_title": title,
@@ -68,17 +68,11 @@ class Task:
                 setattr(self, key, value)
 
     def __str__(self) -> None:
-        return (
-            f"Task: {self.id}\n"
-            f"Title: {self._title}\n"
-            f"Description: {self._description}\n"
-            f"Expiration Date: {self._expiration_date}\n"
-            f"State: {self.state}"
-        )
+        return f"Task: {self.id}\nTitle: {self._title}\nDescription: {self._description}\nExpiration Date: {self._expiration_date}\nState: {self.state}"
 
 
 def main() -> None:
-    print("----- Main Task.py -----")
+    logger.info("----- Main Task.py -----")
 
     task = Task(
         title="Tarea 1",
@@ -86,11 +80,11 @@ def main() -> None:
         expiration_date=datetime(year=2025, month=2, day=24),
     )
 
-    print(task)
+    logger.info(task)
 
-    task.change_task_state(state="in_progress")
+    task.change_state(state="in_progress")
 
-    print(task)
+    logger.info(task)
 
 
 if __name__ == "__main__":
