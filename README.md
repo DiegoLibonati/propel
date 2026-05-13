@@ -28,13 +28,13 @@ The package follows the `src` layout, ships with a complete test suite using `py
 
 Dependencies are declared in `pyproject.toml` and split into optional groups so production installs stay minimal.
 
-**Runtime ([project.dependencies])**
+#### Runtime (`[project.dependencies]`)
 
 ```
 # no third-party runtime dependencies
 ```
 
-**Dev ([project.optional-dependencies] dev)**
+#### Dev (`[project.optional-dependencies]` dev)
 
 ```
 pre-commit==4.3.0
@@ -42,7 +42,7 @@ pip-audit==2.7.3
 ruff==0.11.12
 ```
 
-**Test ([project.optional-dependencies] test)**
+#### Test (`[project.optional-dependencies]` test)
 
 ```
 pytest==8.4.2
