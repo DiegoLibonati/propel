@@ -62,7 +62,8 @@ class TestTaskModelInit:
             description="My Description",
             expiration_date=datetime(2026, 12, 31),
         )
-        assert isinstance(task.id, UUID)
+        assert isinstance(task.id, str)
+        assert UUID(task.id).version == 4
 
     @pytest.mark.unit
     def test_each_instance_has_unique_id(self) -> None:
@@ -159,7 +160,7 @@ class TestTaskModelEdit:
 
     @pytest.mark.unit
     def test_edit_does_not_change_id(self, task: TaskModel) -> None:
-        original_id: UUID = task.id
+        original_id: str = task.id
         task.edit(title="Changed")
         assert task.id == original_id
 
