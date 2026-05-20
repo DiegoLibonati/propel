@@ -117,7 +117,7 @@ The repository ships with a **GitHub Actions** pipeline defined in [`.github/wor
 
 ### Release job (only on push to `main`)
 
-4. **`release`** — runs [`python-semantic-release`](https://python-semantic-release.readthedocs.io/), which inspects the commits since the latest tag, decides the next SemVer version using [Conventional Commits](#conventional-commits-required-for-releases), updates `CHANGELOG.md` and the version in `pyproject.toml`, then commits, tags and pushes back to `main` and creates the matching GitHub Release. It is skipped automatically when the commit message contains `[skip release]`, to avoid release loops.
+4. **`release`** — runs [`python-semantic-release`](https://python-semantic-release.readthedocs.io/), which inspects the commits since the latest tag, decides the next SemVer version using [Conventional Commits](#conventional-commits-required-for-releases), updates `CHANGELOG.md` and the version in `pyproject.toml`, then commits (with the message `chore(release): v{version} [skip release]`), tags as `v{version}` and pushes back to `main`, finally creating the matching GitHub Release with the built `*.whl` and `*.tar.gz` attached. The release commit's `[skip release]` marker prevents the workflow from triggering itself in a loop.
 
 ### Conventional Commits (required for releases)
 
@@ -127,8 +127,13 @@ Commits merged into `main` must follow [Conventional Commits](https://www.conven
 |---|---|---|
 | `feat:` / `feat(scope):` | **MINOR** | `feat(manager): add bulk remove_tasks` |
 | `fix:` / `fix(scope):` | **PATCH** | `fix: prevent crash on empty task id` |
-| `perf:`, `refactor:`, `docs:`, `build:`, `ci:`, `chore:`, `style:`, `test:` | **PATCH** | `refactor: extract state validator` |
-| `feat!:` / `fix!:` or `BREAKING CHANGE:` in the body | **MAJOR** | `feat!: rename TaskModel to Task` |
+| `perf:` / `perf(scope):` | **PATCH** | `perf: speed up state lookup` |
+| `refactor:`, `docs:`, `build:`, `ci:`, `chore:`, `style:`, `test:` | **no release** | `refactor: extract state validator` |
+| `feat!:` / `fix!:` or `BREAKING CHANGE:` in the body | **MAJOR** *(see note)* | `feat!: rename TaskModel to Task` |
+
+Only `feat:`, `fix:` and `perf:` trigger a release. The other allowed prefixes (`refactor`, `docs`, `build`, `ci`, `chore`, `style`, `test`) are recognized by the changelog grouping but do **not** bump the version on their own — push one of those alone and the `release` job will run but produce no new release.
+
+> **Note on MAJOR bumps while at `0.x.y`**: `major_on_zero` is disabled. While the project version is still in the `0.x.y` range, a breaking change (`feat!:` / `BREAKING CHANGE:`) bumps the **minor** segment instead of moving to `1.0.0`. Major bumps only kick in once the version reaches `1.0.0` or higher.
 
 When a push contains multiple commits, the highest applicable bump wins (a single `feat:` among many `fix:` triggers a MINOR bump). If you squash-merge PRs, configure the repo to use the PR title as the squash commit message and write the **PR title** following the convention.
 
@@ -147,9 +152,9 @@ To skip **everything** including validation, use GitHub's standard `[skip ci]` m
 | Output | Location |
 |---|---|
 | Validation logs (lint, mypy, audit, tests) | **Actions** tab on GitHub |
-| Source distribution (`*.tar.gz`) | Ephemeral, inside the runner |
+| Source distribution (`*.tar.gz`) and wheel (`*.whl`) | Attached as assets to the corresponding **GitHub Release** |
 | Version history & notes | [`CHANGELOG.md`](CHANGELOG.md) + Releases page |
-| Tagged versions | **Releases** page (sidebar of the repo) |
+| Tagged versions (`v{version}`) | **Releases** page (sidebar of the repo) |
 
 > **Note:** GitHub's **Packages** section is for package registries (npm, PyPI, Docker, etc.) and does not host source tarballs. Tagged versions and their changelog entries always live under **Releases**.
 

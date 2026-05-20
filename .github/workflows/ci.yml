@@ -115,6 +115,6 @@ jobs:
           cache: pip
 
       - name: Python Semantic Release
-        uses: python-semantic-release/python-semantic-release@v9
+        uses: python-semantic-release/python-semantic-release@v9.21.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
