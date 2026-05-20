@@ -41,6 +41,7 @@ pre-commit==4.3.0
 pip-audit==2.7.3
 ruff==0.11.12
 mypy==1.13.0
+python-semantic-release==9.21.0
 ```
 
 #### Test (`[project.optional-dependencies]` test)
